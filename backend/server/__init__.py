@@ -1,4 +1,5 @@
 from __future__ import annotations
+import traceback
 from typing import TYPE_CHECKING
 
 import io
@@ -25,6 +26,7 @@ from playwright.async_api import async_playwright, Error as PlaywrightError
 from hypercorn.asyncio import serve as hypercorn_serve
 from hypercorn.config import Config as HypercornConfig
 
+from backend.server import preworks
 from models import Mr_convert
 from _orjson import ORJSONDecoder, ORJSONEncoder
 from errors import InvalidURLError, PageNotFoundError, SiteDownError
@@ -117,7 +119,10 @@ class BrowserController:
         except PlaywrightError as e:
             if "ERR_NAME_NOT_RESOLVED" in e.message:
                 raise InvalidURLError()
-
+        try:
+            await preworks.do(page)
+        except Exception as e:
+            traceback.print_exception(e)
         height = await page.evaluate(
             "() => (document.documentElement.scrollHeight || document.body.scrollHeight) - window.innerHeight"
         )

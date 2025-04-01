@@ -1,51 +1,48 @@
 # WebRecorder
+
 A FastAPI + Playwright Web Backend that can record the page of a website from it's URL
 
-
 ## Requirements
+
 - Docker v4.23.0 and above (optional, check out [Running without Docker](#running-without-docker))
 
-
 ## Setup Guide
+
 - Clone the repository
 
-    ```bash
-    git clone https://github.com/AkshuAgarwal/WebRecorder
-    cd WebRecorder
-    ```
-
+  ```bash
+  git clone https://github.com/AkshuAgarwal/WebRecorder
+  cd WebRecorder
+  ```
 - Make sure you have [Docker](https://docker.com) installed. If not, install and set it up.
-
 - Setup the environment variables
-    - Rename [`.env.prod.example`](./.env.prod.example) to `.env.prod`
 
-    - Set the values to the environment variables in the file
-        - `ENVIRONMENT`: The current working environment (`development`/`production`). Do not change it as it is already synced with the env file.
+  - Rename [`.env.prod.example`](./.env.prod.example) to `.env.prod`
+  - Set the values to the environment variables in the file
 
-        - `CORS_ALLOW_ORIGINS`: A comma separated list of CORS allowed origins. "*" can be used as wildcard to allow all origins.
-
+    - `ENVIRONMENT`: The current working environment (`development`/`production`). Do not change it as it is already synced with the env file.
+    - `CORS_ALLOW_ORIGINS`: A comma separated list of CORS allowed origins. "*" can be used as wildcard to allow all origins.
 - Setup SSL Certificate and Key
-    - Generate an SSL certificate and key.
 
-        - To generate a sample certificate and key (for testing, not recommended for production), run
+  - Generate an SSL certificate and key.
 
-            ```bash
-            openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout cert.key -out cert.crt
-            ```
+    - To generate a sample certificate and key (for testing, not recommended for production), run
 
-            > Make sure you have openssl installed.
+      ```bash
+      openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout cert.key -out cert.crt
+      ```
 
-            Once generated, copy these files and paste them into [`/nginx`](./nginx/) directory.
+      > Make sure you have openssl installed.
+      >
 
-    - Replace [`nginx/cert.crt.example`](./nginx/cert.crt.example) with `cert.crt` file and [`nginx/cert.key.example`](./nginx/cert.key.example) with `cert.key` file.
-
+      Once generated, copy these files and paste them into [`/nginx`](./nginx/) directory.
+  - Replace [`nginx/cert.crt.example`](./nginx/cert.crt.example) with `cert.crt` file and [`nginx/cert.key.example`](./nginx/cert.key.example) with `cert.key` file.
 - Run the code using docker compose
 
-    ```bash
-    # For production environment
-    docker compose -f docker-compose.yaml -f docker.compose.prod.yaml up
-    ```
-
+  ```bash
+  # For production environment
+  docker compose -f docker-compose.yaml -f docker.compose.prod.yaml up
+  ```
 
 ## Running without Docker
 
@@ -56,74 +53,74 @@ If you wish to run the server without using docker, you can follow the instructi
 - Python 3.11 and above
 - Redis Stack Server 7.2.4 and above
 
-
 ## Setup Guide (without Docker)
+
 - Clone the repository
 
-    ```bash
-    git clone https://github.com/AkshuAgarwal/WebRecorder
-    cd WebRecorder
-    ```
-
+  ```bash
+  git clone https://github.com/AkshuAgarwal/WebRecorder
+  cd WebRecorder
+  ```
 - Install and setup [Redis Stack Server](https://redis.io/docs/latest/operate/oss_and_stack/install/install-stack/)
-
 - Install the required python packages
-    - Create and activate the virtual environment (optional)
 
-        ```bash
-        python -m venv .venv
-        
-        # Linux
-        source .venv/bin/activate
+  - Create and activate the virtual environment (optional)
 
-        # Windows
-        .venv/Scripts/activate
-        ```
-    
-    - Install the packages
+    ```bash
+    python -m venv .venv
 
-        ```bash
-        python -m pip install -r requirements.txt
-        ```
+    # Linux
+    source .venv/bin/activate
 
-    - Install playwright
+    # Windows
+    .venv/Scripts/activate
+    ```
+  - Install the packages
 
-        ```bash
-        playwright install chromium
-        playwright install-deps
-        ```
+    ```bash
+    python -m pip install -r requirements.txt
+    ```
+  - Install playwright
 
+    ```bash
+    playwright install chromium
+    playwright install-deps
+    ```
 - Setup the environment variables
-    - Rename [`.env.example`](./.env.example) to `.env`
 
-    - Set the values to the environment variables in the file
-        - `ENVIRONMENT`: The current working environment (`development`/`production`). Do not change it as it is already synced with the env file.
+  - Rename [`.env.example`](./.env.example) to `.env`
+  - Set the values to the environment variables in the file
 
-        - `CORS_ALLOW_ORIGINS`: A comma separated list of CORS allowed origins. "*" can be used as wildcard to allow all origins.
-
+    - `ENVIRONMENT`: The current working environment (`development`/`production`). Do not change it as it is already synced with the env file.
+    - `CORS_ALLOW_ORIGINS`: A comma separated list of CORS allowed origins. "*" can be used as wildcard to allow all origins.
 - Run the Redis Server
 
-    ```bash
-    redis-stack-server
-    ```
-
+  ```bash
+  redis-stack-server
+  ```
 - Start the application
 
-    ```bash
-    python server run
+  ```bash
+  python server run
 
-    # For all the commands, run `python server help`
-    ```
+  # For all the commands, run `python server help`
+  ```
 
 > If you want to use Nginx, you can do it manually by following their documentation and configure the server accordingly.
 
+## API
+
+### / `GET`
+
+### /api/convert `POST`
+
+### /api/convert/status `GET`
+
+### /api/convert/video `GET`
 
 ## Limitations
 
 - The server can only run on one worker/process. Playwright does not support using multiple workers or processes and will result in an error.
-
 - Video recording is slow. The server runs a chromium instance, opens the website, scrolls down through the webpage and simultaneously records it all. The recording takes some time, dependingg on the scroll speed (which is set to 300 pixels/sec by default).
-
 - The server requires read and write access to filesystem since it saves and reads the recorded video from the source filesystem and not in/from IO Buffers.
-
 - The recording process is blocking. That means when a request comes while other video is still recording, the server will push it to a queue and will not start recording until all the previous recordings gets completed.
