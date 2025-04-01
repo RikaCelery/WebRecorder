@@ -1,9 +1,9 @@
 from urllib.parse import urlparse
-from playwright.async_api import Page as page
-async def do(p:page):
+from playwright.async_api import Page
+async def do(p:Page):
     host = urlparse(p.url).hostname
     if host.endswith("pornhub.com"):
-        element = page.wait_for_selector(".gtm-event-age-verification",timeout=2000)
+        element = p.wait_for_selector(".gtm-event-age-verification",timeout=2000)
         if element is not None:
             await element.click()
     ...
