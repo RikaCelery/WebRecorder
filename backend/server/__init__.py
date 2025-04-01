@@ -26,7 +26,7 @@ from playwright.async_api import async_playwright, Error as PlaywrightError
 from hypercorn.asyncio import serve as hypercorn_serve
 from hypercorn.config import Config as HypercornConfig
 
-from backend.server import preworks
+import preworks
 from models import Mr_convert
 from _orjson import ORJSONDecoder, ORJSONEncoder
 from errors import InvalidURLError, PageNotFoundError, SiteDownError
