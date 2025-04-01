@@ -1,9 +1,10 @@
+import asyncio
 from urllib.parse import urlparse
 from playwright.async_api import Page
-async def do(p:Page):
-    host = urlparse(p.url).hostname
+async def do(page:Page):
+    host = urlparse(page.url).hostname
     if host.endswith("pornhub.com"):
-        element = await p.wait_for_selector(".gtm-event-age-verification",timeout=8000)
-        if element is not None and element.is_visible():
-            await element.click()
+        await page.goto("https://www.pornhub.com")
+        await page.get_by_role("button", name="I am 18 or older - Enter").click()
+        await asyncio.sleep(2)
     ...
